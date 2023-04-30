@@ -1,8 +1,5 @@
 import { Channel, Client, EmbedBuilder, TextBasedChannel } from "discord.js";
 import { z } from "zod";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 const envSchema = z.object({
   BOT_TOKEN: z.string(),
