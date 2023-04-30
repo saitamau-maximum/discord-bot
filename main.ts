@@ -15,7 +15,8 @@ const client = new Client({
 const NOTIFICATION_JOIN_TEMPLATE = (
   username: string,
   channelName: string,
-  memberCount: number
+  memberCount: number,
+  avatarURL: string
 ) =>
   new EmbedBuilder({
     title: `VC参加通知`,
@@ -32,13 +33,17 @@ const NOTIFICATION_JOIN_TEMPLATE = (
         inline: true,
       },
     ],
+    image: {
+      url: avatarURL,
+    },
     color: 0xff0000,
   });
 
 const NOTIFICATION_LEAVE_TEMPLATE = (
   username: string,
   channelName: string,
-  memberCount: number
+  memberCount: number,
+  avatarURL: string
 ) =>
   new EmbedBuilder({
     title: `VC退出通知`,
@@ -55,6 +60,9 @@ const NOTIFICATION_LEAVE_TEMPLATE = (
         inline: true,
       },
     ],
+    image: {
+      url: avatarURL,
+    },
     color: 0x0000ff,
   });
 
@@ -73,6 +81,9 @@ const isChannelTextBased = (channel?: Channel): channel is TextBasedChannel => {
   return true;
 };
 
+const NOT_FOUND_USER_IMAGE_URL =
+  "https://images.unsplash.com/photo-1614680376739-414d95ff43df?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1374&q=80";
+
 client.on("voiceStateUpdate", (oldState, newState) => {
   const newUserChannel = newState.channel; // 新たに参加したチャンネル
   const oldUserChannel = oldState.channel; // 退出したチャンネル
@@ -86,7 +97,8 @@ client.on("voiceStateUpdate", (oldState, newState) => {
         NOTIFICATION_JOIN_TEMPLATE(
           newState.member?.displayName ?? "unknown",
           newUserChannel.name,
-          newUserChannel.members.size
+          newUserChannel.members.size,
+          newState.member?.user.avatarURL() ?? NOT_FOUND_USER_IMAGE_URL
         ),
       ],
     });
@@ -102,7 +114,8 @@ client.on("voiceStateUpdate", (oldState, newState) => {
         NOTIFICATION_LEAVE_TEMPLATE(
           newState.member?.displayName ?? "unknown",
           oldUserChannel.name,
-          oldUserChannel.members.size
+          oldUserChannel.members.size,
+          newState.member?.user.avatarURL() ?? NOT_FOUND_USER_IMAGE_URL
         ),
       ],
     });
@@ -118,12 +131,14 @@ client.on("voiceStateUpdate", (oldState, newState) => {
         NOTIFICATION_LEAVE_TEMPLATE(
           newState.member?.displayName ?? "unknown",
           oldUserChannel.name,
-          oldUserChannel.members.size
+          oldUserChannel.members.size,
+          newState.member?.user.avatarURL() ?? NOT_FOUND_USER_IMAGE_URL
         ),
         NOTIFICATION_JOIN_TEMPLATE(
           newState.member?.displayName ?? "unknown",
           newUserChannel.name,
-          newUserChannel.members.size
+          newUserChannel.members.size,
+          newState.member?.user.avatarURL() ?? NOT_FOUND_USER_IMAGE_URL
         ),
       ],
     });
