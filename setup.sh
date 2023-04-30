@@ -3,9 +3,11 @@
 echo "Setting up to EC2..."
 
 # generate .env
-echo "Generating .env file..."
-cp .env.example .env
-echo ".envファイルを作成しました、環境変数を設定してください"
+if [ ! -e .env ]; then
+    echo "Generating .env file..."
+    cp .env.example .env
+    echo ".envファイルを作成しました、環境変数を設定してください"
+fi
 
 # Setup nvm
 echo "Setting up nvm..."
