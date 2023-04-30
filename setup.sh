@@ -1,0 +1,25 @@
+#!/bin/bash
+
+echo "Setting up to EC2..."
+
+# generate .env
+echo "Generating .env file..."
+cp .env.example .env
+echo ".envファイルを作成しました、環境変数を設定してください"
+
+# Setup nvm
+echo "Setting up nvm..."
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+. ~/.nvm/nvm.sh
+
+# Install node lts
+echo "Installing node lts..."
+nvm install --lts
+
+# Install node dependencies
+echo "Installing node dependencies..."
+npm ci
+
+# Start node server
+echo "Starting node server..."
+npm run start
