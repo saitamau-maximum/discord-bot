@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source ~/.bashrc # add nvm to PATH
+
 FILE_DIR=$(
     cd $(dirname $0)
     pwd
