@@ -20,6 +20,9 @@ nvm install --lts
 echo "Installing node dependencies..."
 npm ci
 
-# Start node server
-echo "Starting node server..."
-npm run start
+# Set Systemd
+echo "Setting up Systemd..."
+sudo cp ./discord-bot.service /etc/systemd/system/discord-bot.service
+sudo systemctl daemon-reload
+sudo systemctl enable discord-bot.service
+sudo systemctl start discord-bot.service
