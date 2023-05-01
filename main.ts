@@ -123,7 +123,11 @@ client.on("voiceStateUpdate", (oldState, newState) => {
   }
 
   // チャンネルを移動した場合
-  if (oldUserChannel !== null && newUserChannel !== null) {
+  if (
+    oldUserChannel !== null &&
+    newUserChannel !== null &&
+    oldUserChannel.id !== newUserChannel.id
+  ) {
     const textChannel = client.channels.cache.get(env.NOTIFY_CHANNEL_ID);
     if (!isChannelTextBased(textChannel)) return;
     textChannel.send({
