@@ -66,6 +66,34 @@ const NOTIFICATION_LEAVE_TEMPLATE = (
     color: 0x0000ff,
   });
 
+const NOTIFICATION_MOVE_TEMPLATE = (
+  username: string,
+  oldChannelName: string,
+  newChannelName: string,
+  memberCount: number,
+  avatarURL: string
+) =>
+  new EmbedBuilder({
+    title: `VC移動通知`,
+    description: `${username} が ${oldChannelName} から ${newChannelName} に移動しました`,
+    fields: [
+      {
+        name: "現在の参加人数",
+        value: `${memberCount}`,
+        inline: true,
+      },
+      {
+        name: "時刻",
+        value: new Date().toLocaleString(),
+        inline: true,
+      },
+    ],
+    image: {
+      url: avatarURL,
+    },
+    color: 0x00ff00,
+  });
+
 const isChannelTextBased = (channel?: Channel): channel is TextBasedChannel => {
   // そもそもチャンネルが見つからない場合
   if (!channel) {
@@ -132,14 +160,9 @@ client.on("voiceStateUpdate", (oldState, newState) => {
     if (!isChannelTextBased(textChannel)) return;
     textChannel.send({
       embeds: [
-        NOTIFICATION_LEAVE_TEMPLATE(
+        NOTIFICATION_MOVE_TEMPLATE(
           newState.member?.displayName ?? "unknown",
           oldUserChannel.name,
-          oldUserChannel.members.size,
-          newState.member?.user.avatarURL() ?? NOT_FOUND_USER_IMAGE_URL
-        ),
-        NOTIFICATION_JOIN_TEMPLATE(
-          newState.member?.displayName ?? "unknown",
           newUserChannel.name,
           newUserChannel.members.size,
           newState.member?.user.avatarURL() ?? NOT_FOUND_USER_IMAGE_URL
