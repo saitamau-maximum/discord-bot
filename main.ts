@@ -7,6 +7,15 @@ const envSchema = z.object({
 });
 
 const env = envSchema.parse(process.env);
+process.env.TZ = "Asia/Tokyo";
+const NOTIFICATION_DISABLED_FROM = 0;
+const NOTIFICATION_DISABLED_TO = 8;
+
+const isNotificationDisabled = () => {
+  const now = new Date();
+  const hour = now.getHours();
+  return hour >= NOTIFICATION_DISABLED_FROM && hour < NOTIFICATION_DISABLED_TO;
+};
 
 const client = new Client({
   intents: ["Guilds", "GuildVoiceStates"],
@@ -113,6 +122,8 @@ const NOT_FOUND_USER_IMAGE_URL =
   "https://images.unsplash.com/photo-1614680376739-414d95ff43df?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1374&q=80";
 
 client.on("voiceStateUpdate", (oldState, newState) => {
+  if (isNotificationDisabled()) return;
+
   const newUserChannel = newState.channel; // 新たに参加したチャンネル
   const oldUserChannel = oldState.channel; // 退出したチャンネル
 
