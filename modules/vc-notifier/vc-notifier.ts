@@ -39,7 +39,7 @@ export class VoiceChannelNotifier extends DiscordBotModule {
         },
       ],
       "VC参加、退出、移動時に通知を送信するBOT",
-      "1.1.0",
+      "1.2.0",
       "sor4chi"
     );
     this.enabled = true;
