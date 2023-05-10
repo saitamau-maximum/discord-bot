@@ -90,7 +90,11 @@ export class VoiceChannelNotifier extends DiscordBotModule {
       }
 
       // チャンネルを移動した場合
-      if (oldUserChannel !== null && newUserChannel !== null) {
+      if (
+        oldUserChannel !== null &&
+        newUserChannel !== null &&
+        oldUserChannel.id !== newUserChannel.id
+      ) {
         if (!isChannelTextBased(notifyChannel)) return;
         notifyChannel.send({
           embeds: [
