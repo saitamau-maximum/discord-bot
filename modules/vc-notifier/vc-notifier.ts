@@ -1,7 +1,11 @@
-import { Client } from "discord.js";
+import {
+  Client,
+  SlashCommandBuilder,
+  SlashCommandSubcommandBuilder,
+} from "discord.js";
 
 import { DiscordBotModule } from "../generic";
-import { getHelpFromModule, isChannelTextBased } from "../utils";
+import { isChannelTextBased } from "../utils";
 import { NOTIFICATION_TEMPLATE } from "./template";
 import {
   NOTIFICATION_DISABLED_FROM,
@@ -16,33 +20,44 @@ const isNotificationDisabled = () => {
 };
 
 export class VoiceChannelNotifier extends DiscordBotModule {
-  enabled: boolean;
+  private enabled = true;
+  name = "VC通知めりん";
+  description = "VCの参加/退出/移動を通知する";
+  version = "1.3.0";
+  author = "sor4chi";
+  private BASE_COMMANDS = ["vc-notifier", "vcn"];
+  private SUB_COMMANDS = {
+    help: "VC通知めりんのヘルプを表示する",
+    info: "VC通知めりんの情報を表示する",
+    disable: "VC通知めりんを無効化する",
+    enable: "VC通知めりんを有効化する",
+  };
 
   constructor(client: Client, env: Env) {
-    super(
-      client,
-      env,
-      "VC通知めりん",
-      ["/vc-notifier", "/vcn"],
-      [
-        {
-          command: "",
-          description: "VC通知めりんのヘルプを表示する",
-        },
-        {
-          command: "disable",
-          description: "VC通知めりんを無効化する",
-        },
-        {
-          command: "enable",
-          description: "VC通知めりんを有効化する",
-        },
-      ],
-      "VC参加、退出、移動時に通知を送信するBOT",
-      "1.2.0",
-      "sor4chi"
+    super(client, env);
+  }
+
+  command() {
+    const subCommands = Object.entries(this.SUB_COMMANDS).map(
+      ([subCommand, description]) =>
+        new SlashCommandSubcommandBuilder()
+          .setName(subCommand)
+          .setDescription(description)
     );
-    this.enabled = true;
+
+    const baseCommands = this.BASE_COMMANDS.map((baseCommand) =>
+      new SlashCommandBuilder()
+        .setName(baseCommand)
+        .setDescription(this.description)
+    );
+
+    subCommands.forEach((subcommand) => {
+      baseCommands.forEach((baseCommand) => {
+        baseCommand.addSubcommand(subcommand);
+      });
+    });
+
+    return baseCommands.map((baseCommand) => baseCommand.toJSON());
   }
 
   init() {
@@ -111,36 +126,59 @@ export class VoiceChannelNotifier extends DiscordBotModule {
       }
     });
 
-    this.client.on("messageCreate", (message) => {
-      if (message.author.bot) return;
-      if (
-        !this.commandPrefixes.some((prefix) =>
-          message.content.startsWith(prefix)
-        )
-      )
-        return;
+    this.client.on("interactionCreate", (interaction) => {
+      if (!interaction.isCommand()) return;
+      if (!interaction.isChatInputCommand()) return;
+      if (!this.BASE_COMMANDS.includes(interaction.commandName)) return;
+      if (!interaction.inGuild()) return;
 
-      const args = message.content.split(" ");
+      const subCommand = interaction.options.getSubcommand();
 
-      switch (args[1]) {
+      switch (subCommand) {
+        case "help":
+          interaction.reply({
+            content: this.help(),
+          });
+          break;
+        case "info":
+          interaction.reply({
+            content: this.info(),
+          });
+          break;
         case "disable":
           this.enabled = false;
-          message.channel.send({
-            content: "VC通知めりんを無効化した",
+          interaction.reply({
+            content: "通知を無効化しました",
           });
           break;
         case "enable":
           this.enabled = true;
-          message.channel.send({
-            content: "VC通知めりんを有効化した",
-          });
-          break;
-        default:
-          message.channel.send({
-            content: getHelpFromModule(this),
+          interaction.reply({
+            content: "通知を有効化しました",
           });
           break;
       }
     });
+  }
+
+  info() {
+    return `
+Name: ${this.name}
+Description: ${this.description}
+Version: ${this.version}
+Author: ${this.author}
+`.trim();
+  }
+
+  help() {
+    return `
+Base Commands: [ ${this.BASE_COMMANDS.map(
+      (baseCommand) => `/${baseCommand}`
+    ).join(", ")} ]
+Sub Commands:
+${Object.entries(this.SUB_COMMANDS)
+  .map(([subCommand, description]) => `${subCommand}: ${description}`)
+  .join("\n")}
+`.trim();
   }
 }

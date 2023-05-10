@@ -1,9 +1,10 @@
-import { Client } from "discord.js";
+import { Client, REST, Routes } from "discord.js";
 import { z } from "zod";
 import * as modules from "./modules";
 
 const envSchema = z.object({
   BOT_TOKEN: z.string(),
+  BOT_ID: z.string(),
   NOTIFY_CHANNEL_ID: z.string(),
 });
 
@@ -26,8 +27,26 @@ client.once("ready", () => {
   console.log(`Logged in as ${client.user?.tag}!`);
 });
 
-Object.values(modules).forEach((Module) => {
-  new Module(client, env).init();
+const commandsJsons = Object.values(modules).flatMap((Module) => {
+  const module = new Module(client, env);
+  module.init();
+  return module.command();
 });
+
+const rest = new REST({ version: "10" }).setToken(env.BOT_TOKEN);
+
+(async () => {
+  try {
+    console.log("Started refreshing application (/) commands.");
+
+    await rest.put(Routes.applicationCommands(env.BOT_ID), {
+      body: commandsJsons,
+    });
+
+    console.log("Successfully reloaded application (/) commands.");
+  } catch (error) {
+    console.error(error);
+  }
+})();
 
 client.login(env.BOT_TOKEN);

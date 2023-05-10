@@ -1,54 +1,29 @@
-import { Client } from "discord.js";
+import {
+  Client,
+  RESTPostAPIChatInputApplicationCommandsJSONBody,
+} from "discord.js";
 import { Env } from "../main";
 
-export interface DiscordBotCommand {
-  /** command */
-  command: string;
-  /** description  (optional, discord markdown supported) */
-  description?: string;
-  /**
-   * callback (optional)
-   *
-   * 引数がDynamicな場合はcallback内で処理する
-   */
-  callback?: () => void;
-}
-
-export class DiscordBotModule {
+export abstract class DiscordBotModule {
   /** DiscordBot client */
   client: Client;
   /** env(validated) */
   env: Env;
   /** DiscordBotModuleの名前 */
-  name: string;
-  /** DiscordBotModuleのcommand prefix一覧 */
-  commandPrefixes: string[];
-  /** DiscordBotModuleのcommand */
-  commands: DiscordBotCommand[];
+  abstract name: string;
   /** DiscordBotModuleの説明 */
-  description: string;
+  abstract description: string;
   /** DiscordBotModuleのバージョン */
-  version: string;
+  abstract version: string;
   /** DiscordBotModuleの作者 */
-  author: string;
+  abstract author: string;
 
-  constructor(
-    client: Client,
-    env: Env,
-    name: string,
-    commandPrefixes: string[],
-    commands: DiscordBotCommand[],
-    description: string,
-    version: string,
-    author: string
-  ) {
+  protected constructor(client: Client, env: Env) {
     this.client = client;
     this.env = env;
-    this.name = name;
-    this.commandPrefixes = commandPrefixes;
-    this.commands = commands;
-    this.description = description;
-    this.version = version;
-    this.author = author;
   }
+
+  protected abstract init(): void;
+
+  protected abstract command(): RESTPostAPIChatInputApplicationCommandsJSONBody[];
 }
