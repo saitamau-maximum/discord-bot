@@ -18,6 +18,8 @@ export const TITLE_GENERATOR_PROMPT: ChatCompletionRequestMessage = {
 `.trim(),
 };
 
+export const DEBUGGING_PROMPT_TRIGGER = "DEBUG";
+
 export const BASE_COMMAND = "merin";
 export const SUB_COMMAND_ASK_OPTION_MESSAGE = "message";
 export const SUB_COMMAND_ASK_OPTIONS = {
