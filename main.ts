@@ -1,12 +1,16 @@
 import { Client, REST, Routes } from "discord.js";
 import { z } from "zod";
 import * as modules from "./modules";
+import { config } from "dotenv";
 
 const envSchema = z.object({
   BOT_TOKEN: z.string(),
   BOT_ID: z.string(),
   NOTIFY_CHANNEL_ID: z.string(),
+  OPENAI_API_KEY: z.string(),
 });
+
+config();
 
 export type Env = z.infer<typeof envSchema>;
 

@@ -8,8 +8,14 @@ import { DiscordBotModule } from "../generic";
 import { isChannelTextBased } from "../utils";
 import { NOTIFICATION_TEMPLATE } from "./template";
 import {
+  BASE_COMMANDS,
   NOTIFICATION_DISABLED_FROM,
   NOTIFICATION_DISABLED_TO,
+  SUB_COMMANDS,
+  SUB_COMMAND_DISABLE,
+  SUB_COMMAND_ENABLE,
+  SUB_COMMAND_HELP,
+  SUB_COMMAND_INFO,
 } from "./constants";
 import { Env } from "../../main";
 
@@ -25,27 +31,20 @@ export class VoiceChannelNotifier extends DiscordBotModule {
   description = "VCの参加/退出/移動を通知する";
   version = "1.3.0";
   author = "sor4chi";
-  private BASE_COMMANDS = ["vc-notifier", "vcn"];
-  private SUB_COMMANDS = {
-    help: "VC通知めりんのヘルプを表示する",
-    info: "VC通知めりんの情報を表示する",
-    disable: "VC通知めりんを無効化する",
-    enable: "VC通知めりんを有効化する",
-  };
 
   constructor(client: Client, env: Env) {
     super(client, env);
   }
 
   command() {
-    const subCommands = Object.entries(this.SUB_COMMANDS).map(
+    const subCommands = Object.entries(SUB_COMMANDS).map(
       ([subCommand, description]) =>
         new SlashCommandSubcommandBuilder()
           .setName(subCommand)
           .setDescription(description)
     );
 
-    const baseCommands = this.BASE_COMMANDS.map((baseCommand) =>
+    const baseCommands = BASE_COMMANDS.map((baseCommand) =>
       new SlashCommandBuilder()
         .setName(baseCommand)
         .setDescription(this.description)
@@ -129,29 +128,29 @@ export class VoiceChannelNotifier extends DiscordBotModule {
     this.client.on("interactionCreate", (interaction) => {
       if (!interaction.isCommand()) return;
       if (!interaction.isChatInputCommand()) return;
-      if (!this.BASE_COMMANDS.includes(interaction.commandName)) return;
+      if (!BASE_COMMANDS.includes(interaction.commandName)) return;
       if (!interaction.inGuild()) return;
 
       const subCommand = interaction.options.getSubcommand();
 
       switch (subCommand) {
-        case "help":
+        case SUB_COMMAND_HELP:
           interaction.reply({
             content: this.help(),
           });
           break;
-        case "info":
+        case SUB_COMMAND_INFO:
           interaction.reply({
             content: this.info(),
           });
           break;
-        case "disable":
+        case SUB_COMMAND_DISABLE:
           this.enabled = false;
           interaction.reply({
             content: "通知を無効化しました",
           });
           break;
-        case "enable":
+        case SUB_COMMAND_ENABLE:
           this.enabled = true;
           interaction.reply({
             content: "通知を有効化しました",
@@ -163,11 +162,11 @@ export class VoiceChannelNotifier extends DiscordBotModule {
 
   help() {
     return `
-Base Commands: [ ${this.BASE_COMMANDS.map(
-      (baseCommand) => `/${baseCommand}`
-    ).join(", ")} ]
+Base Commands: [ ${BASE_COMMANDS.map((baseCommand) => `/${baseCommand}`).join(
+      ", "
+    )} ]
 Sub Commands:
-${Object.entries(this.SUB_COMMANDS)
+${Object.entries(SUB_COMMANDS)
   .map(([subCommand, description]) => `${subCommand}: ${description}`)
   .join("\n")}
 `.trim();
