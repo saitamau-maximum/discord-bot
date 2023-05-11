@@ -23,7 +23,14 @@ export abstract class DiscordBotModule {
     this.env = env;
   }
 
-  protected abstract init(): void;
+  info() {
+    return `
+Name: ${this.name}
+Description: ${this.description}
+Version: ${this.version}
+Author: ${this.author}
+`.trim();
+  }
 
   protected abstract command(): RESTPostAPIChatInputApplicationCommandsJSONBody[];
 }
