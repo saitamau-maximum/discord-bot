@@ -6,6 +6,7 @@ import { ChatCompletionRequestMessage, Configuration, OpenAIApi } from "openai";
 import {
   BASE_COMMAND,
   BASE_INJECTION_PROMPT,
+  DEBUGGING_PROMPT_TRIGGER,
   SUB_COMMANDS,
   SUB_COMMAND_ASK,
   SUB_COMMAND_ASK_OPTIONS,
@@ -124,6 +125,21 @@ export class MerinGPT extends DiscordBotModule {
       // スレッドの作成者がメリンでない場合は無視する
       if (!this.isMerinThread(thread)) return;
       const prompt = this.getPromptFromHistory(history);
+
+      // デバッグ用, "DEBUG"と発言するとpromptをまとめたjsonを送信する
+      if (message.content === DEBUGGING_PROMPT_TRIGGER) {
+        const buffer = Buffer.from(JSON.stringify(prompt, null, 2));
+        await thread.send({
+          content: DEBUGGING_PROMPT_TRIGGER,
+          files: [
+            {
+              attachment: buffer,
+              name: "prompt.json",
+            },
+          ],
+        });
+        return;
+      }
       const answer = await this.fetchCompletion(prompt);
       await thread.send(answer);
     });
@@ -145,7 +161,10 @@ export class MerinGPT extends DiscordBotModule {
       })
     );
 
-    return [BASE_INJECTION_PROMPT, ...historyMessages];
+    return [
+      BASE_INJECTION_PROMPT,
+      ...historyMessages.reverse().filter((message) => message.content !== ""),
+    ];
   }
 
   async fetchCompletion(prompt: ChatCompletionRequestMessage[]) {
