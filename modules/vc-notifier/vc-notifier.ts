@@ -161,15 +161,6 @@ export class VoiceChannelNotifier extends DiscordBotModule {
     });
   }
 
-  info() {
-    return `
-Name: ${this.name}
-Description: ${this.description}
-Version: ${this.version}
-Author: ${this.author}
-`.trim();
-  }
-
   help() {
     return `
 Base Commands: [ ${this.BASE_COMMANDS.map(
