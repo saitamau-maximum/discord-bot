@@ -20,7 +20,7 @@ import { ThreadChannel } from "discord.js";
 export class MerinGPT extends DiscordBotModule {
   name = "めりんGPT";
   description = "Chat GPT APIを利用した対話型ChatBot";
-  version = "1.0.0";
+  version = "1.0.1";
   author = "sor4chi";
   private openai: OpenAIApi;
   private GPT_MODEL = "gpt-3.5-turbo";
