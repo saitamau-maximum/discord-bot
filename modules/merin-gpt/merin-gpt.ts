@@ -130,7 +130,6 @@ export class MerinGPT extends DiscordBotModule {
       if (message.content === DEBUGGING_PROMPT_TRIGGER) {
         const buffer = Buffer.from(JSON.stringify(prompt, null, 2));
         await thread.send({
-          content: DEBUGGING_PROMPT_TRIGGER,
           files: [
             {
               attachment: buffer,

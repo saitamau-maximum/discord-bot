@@ -15,6 +15,7 @@ export const TITLE_GENERATOR_PROMPT: ChatCompletionRequestMessage = {
 聞かれた文章に対して、それを簡潔に説明するタイトルを考えます。
 タイトルのみを考えて出力してください。
 それ以外の文章は出力しないでください。
+30文字以内で出力してください。
 `.trim(),
 };
 
