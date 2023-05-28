@@ -126,7 +126,21 @@ export class MerinGPT extends DiscordBotModule {
       // スレッドの作成者がメリンでない場合は無視する
       if (!this.isMerinThread(thread)) return;
 
+      let count = 0;
+
+      // 最初のタイピングを送信する、その後5秒ごとにタイピングを送信する
       thread.sendTyping();
+      count++;
+
+      const interval = setInterval(() => {
+        // 10回ループしても終了しない場合は流石に終了する
+        if (count > 10) {
+          clearInterval(interval);
+          return;
+        }
+        thread.sendTyping();
+        count++;
+      }, 5000);
 
       const history = await thread.messages.fetch();
 
@@ -147,6 +161,8 @@ export class MerinGPT extends DiscordBotModule {
       }
       const answer = await this.fetchCompletion(prompt);
       await thread.send(answer);
+
+      clearInterval(interval);
     });
   }
 
