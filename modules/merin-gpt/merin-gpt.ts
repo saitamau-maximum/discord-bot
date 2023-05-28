@@ -90,6 +90,8 @@ export class MerinGPT extends DiscordBotModule {
           );
           if (!message) return;
 
+          interaction.channel?.sendTyping();
+
           const reply = await interaction.reply({
             content: `
   ${interaction.user.username}:
@@ -120,10 +122,14 @@ export class MerinGPT extends DiscordBotModule {
       if (this.isMerinMessage(message)) return;
 
       const thread = message.channel;
-      const history = await thread.messages.fetch();
 
       // スレッドの作成者がメリンでない場合は無視する
       if (!this.isMerinThread(thread)) return;
+
+      thread.sendTyping();
+
+      const history = await thread.messages.fetch();
+
       const prompt = this.getPromptFromHistory(history);
 
       // デバッグ用, "DEBUG"と発言するとpromptをまとめたjsonを送信する
