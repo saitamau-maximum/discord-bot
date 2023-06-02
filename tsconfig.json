@@ -1,0 +1,6 @@
+{
+  "ts-node": {
+    "files": true
+  },
+  "files": ["modules/index.ts", "types/*"]
+}
