@@ -1,5 +1,8 @@
 import {
+  CacheType,
   Client,
+  Interaction,
+  Message,
   SlashCommandBuilder,
   SlashCommandSubcommandBuilder,
 } from "discord.js";
@@ -90,7 +93,7 @@ export class TexExporter extends DiscordBotModule {
     return buffer;
   }
 
-  async handleTexMessage(message) {
+  async handleTexMessage(message: Message<boolean>) {
     const texCodeblockMatch = message.content.match(TEX_CODEBLOCK_REGEX);
     if (!texCodeblockMatch) return;
 
@@ -118,7 +121,7 @@ export class TexExporter extends DiscordBotModule {
     }
   }
 
-  handleInteraction(interaction) {
+  handleInteraction(interaction: Interaction<CacheType>) {
     if (!interaction.isCommand()) return;
     if (!interaction.isChatInputCommand()) return;
     if (!BASE_COMMANDS.includes(interaction.commandName)) return;
