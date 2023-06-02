@@ -32,7 +32,7 @@ mj.config({
 export class TexExporter extends DiscordBotModule {
   name = "TexExporter";
   description = "Texで書かれたメッセージを画像にレンダリングして出力します";
-  version = "1.0.0";
+  version = "1.0.1";
   author = "sor4chi";
 
   constructor(client: Client, env: Env) {
@@ -94,8 +94,10 @@ export class TexExporter extends DiscordBotModule {
   }
 
   async handleTexMessage(message: Message<boolean>) {
-    const texCodeblockMatch = message.content.match(TEX_CODEBLOCK_REGEX);
-    if (!texCodeblockMatch) return;
+    const texCodeblockMatches = message.content.matchAll(TEX_CODEBLOCK_REGEX);
+    const texCodes = Array.from(texCodeblockMatches).map((match) => match[1]);
+
+    if (texCodes.length === 0) return;
 
     message.channel.sendTyping();
     const interval = setInterval(() => {
@@ -103,13 +105,17 @@ export class TexExporter extends DiscordBotModule {
     }, 5000);
 
     try {
-      const buffer = await this.renderTexToImage(texCodeblockMatch[1]);
+      const buffers: Buffer[] = [];
+      for (const texCode of texCodes) {
+        const buffer = await this.renderTexToImage(texCode);
+        buffers.push(buffer);
+      }
       await message.channel.send({
         files: [
-          {
+          ...buffers.map((buffer) => ({
             attachment: buffer,
             name: "tex.png",
-          },
+          })),
         ],
       });
     } catch (e) {
