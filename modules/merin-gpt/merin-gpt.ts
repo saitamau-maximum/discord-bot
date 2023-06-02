@@ -20,7 +20,7 @@ import { ThreadChannel } from "discord.js";
 export class MerinGPT extends DiscordBotModule {
   name = "めりんGPT";
   description = "Chat GPT APIを利用した対話型ChatBot";
-  version = "1.0.1";
+  version = "1.1.0";
   author = "sor4chi";
   private openai: OpenAIApi;
   private GPT_MODEL = "gpt-3.5-turbo";
@@ -90,6 +90,8 @@ export class MerinGPT extends DiscordBotModule {
           );
           if (!message) return;
 
+          interaction.channel?.sendTyping();
+
           const reply = await interaction.reply({
             content: `
   ${interaction.user.username}:
@@ -120,10 +122,28 @@ export class MerinGPT extends DiscordBotModule {
       if (this.isMerinMessage(message)) return;
 
       const thread = message.channel;
-      const history = await thread.messages.fetch();
 
       // スレッドの作成者がメリンでない場合は無視する
       if (!this.isMerinThread(thread)) return;
+
+      let count = 0;
+
+      // 最初のタイピングを送信する、その後5秒ごとにタイピングを送信する
+      thread.sendTyping();
+      count++;
+
+      const interval = setInterval(() => {
+        // 10回ループしても終了しない場合は流石に終了する
+        if (count > 10) {
+          clearInterval(interval);
+          return;
+        }
+        thread.sendTyping();
+        count++;
+      }, 5000);
+
+      const history = await thread.messages.fetch();
+
       const prompt = this.getPromptFromHistory(history);
 
       // デバッグ用, "DEBUG"と発言するとpromptをまとめたjsonを送信する
@@ -141,6 +161,8 @@ export class MerinGPT extends DiscordBotModule {
       }
       const answer = await this.fetchCompletion(prompt);
       await thread.send(answer);
+
+      clearInterval(interval);
     });
   }
 
