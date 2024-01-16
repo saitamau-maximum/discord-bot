@@ -116,7 +116,7 @@ export class MembersInspector extends DiscordBotModule {
   renderMember(member: MembersApiResponse[0]) {
     const grade = member.grade.join(", ");
     const prefix = member.isActive ? ":approved:" : ":closed:";
-    return `${prefix} ${member.name} (${grade})`;
+    return `- ${prefix} ${member.name} (${grade})`;
   }
 
   help() {
