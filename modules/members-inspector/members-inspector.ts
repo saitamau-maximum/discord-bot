@@ -56,6 +56,7 @@ export class MembersInspector extends DiscordBotModule {
     this.client.on("interactionCreate", async (interaction) => {
       // コマンド以外は無視する
       if (!interaction.isChatInputCommand()) return;
+      if (BASE_COMMAND !== interaction.commandName) return;
 
       const subCommand = interaction.options.getSubcommand();
 
