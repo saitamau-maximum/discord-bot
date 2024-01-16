@@ -5,7 +5,10 @@ import { Env } from "../../main";
 
 import {
   BASE_COMMAND,
+  Degree,
+  Grade,
   MEMBERS_API_ENDPOINT,
+  Member,
   MembersApiResponse,
   SUB_COMMANDS,
   SUB_COMMAND_HELP,
@@ -71,8 +74,10 @@ export class MembersInspector extends DiscordBotModule {
             res.json()
           )) as MembersApiResponse;
 
+          const parsedMembers = this.parseMembersApiResponse(members);
+
           await interaction.reply({
-            content: this.renderMembers(members),
+            content: this.renderMembers(parsedMembers),
             fetchReply: true,
           });
 
@@ -82,34 +87,43 @@ export class MembersInspector extends DiscordBotModule {
     });
   }
 
-  renderMembers(members: MembersApiResponse) {
-    const gradeSortedMembers = members.sort((a, b) => {
+  parseMembersApiResponse(members: MembersApiResponse): Member[] {
+    return members.map((member) => ({
+      ...member,
+      grade: member.grade.map(parseGrade),
+    }));
+  }
+
+  sortMembers(members: Member[]) {
+    const nameSortedMembers = members.sort((a, b) =>
+      b.name.localeCompare(a.name)
+    );
+    const gradeSortedMembers = nameSortedMembers.sort((a, b) => {
       // Grade順にソート、最初の二文字が数字なのでパースして比較
       // 最大のGradeを持つ人が上に来るようにする
-      const aMaxGrade = Math.max(
-        ...a.grade.map((grade) => parseInt(grade.substring(0, 2)))
-      );
-      const bMaxGrade = Math.max(
-        ...b.grade.map((grade) => parseInt(grade.substring(0, 2)))
-      );
-      return aMaxGrade - bMaxGrade;
+      const aMaxGrade = maxGrade(...a.grade);
+      const bMaxGrade = maxGrade(...b.grade);
+      return maxGrade(aMaxGrade, bMaxGrade) === aMaxGrade ? -1 : 1;
     });
     // さらにそのあと非アクティブな人が下に来るようにする
     const isActiveSortedMembers = gradeSortedMembers.sort((a, b) =>
       a.isActive === b.isActive ? 0 : a.isActive ? -1 : 1
     );
+    return isActiveSortedMembers;
+  }
 
+  renderMembers(members: Member[]) {
     const text = `
     ## Maximum Members Inspector
     Maximumのメンバーの登録状況一覧です。
 
-    ${isActiveSortedMembers.map(this.renderMember).join("\n")}
+    ${this.sortMembers(members).map(this.renderMember).join("\n")}
     `.trim();
 
     return text;
   }
 
-  renderMember(member: MembersApiResponse[0]) {
+  renderMember(member: Member) {
     const grade = member.grade.join(", ");
     const prefix = member.isActive ? ":approved:" : ":closed:";
     return `- ${prefix} ${member.name} (${grade})`;
@@ -129,3 +143,33 @@ ${Object.entries(SUB_COMMANDS)
 `.trim();
   }
 }
+
+export const parseGrade = (grade: string): Grade => {
+  const REGEX = /(\d+)([BMD])/;
+  const match = grade.match(REGEX);
+  if (!match) throw new Error("Invalid grade format");
+
+  const year = parseInt(match[1]);
+  const degree = match[2];
+
+  switch (degree) {
+    case "B":
+      return { year, degree: Degree.Bachelor };
+    case "M":
+      return { year, degree: Degree.Master };
+    case "D":
+      return { year, degree: Degree.Doctor };
+    default:
+      throw new Error("Invalid grade format");
+  }
+};
+
+export const maxGrade = (...grades: Grade[]) => {
+  return grades.reduce((_maxGrade, grade) => {
+    if (_maxGrade.degree < grade.degree) return grade;
+    if (_maxGrade.degree > grade.degree) return _maxGrade;
+    if (_maxGrade.year < grade.year) return _maxGrade;
+    if (_maxGrade.year > grade.year) return grade;
+    return _maxGrade;
+  });
+};
