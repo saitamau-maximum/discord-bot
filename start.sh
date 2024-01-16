@@ -8,4 +8,5 @@ FILE_DIR=$(
 )
 
 cd $FILE_DIR
+npm run build
 npm run start
