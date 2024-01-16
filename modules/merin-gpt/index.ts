@@ -1,1 +1,1 @@
-export * from "./merin-gpt"
+export { MerinGPT } from "./merin-gpt";
