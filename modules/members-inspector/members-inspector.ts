@@ -103,10 +103,6 @@ export class MembersInspector extends DiscordBotModule {
     ## Maximum Members Inspector
     Maximumのメンバーの登録状況一覧です。
 
-    > :closed: :approved: はメンバーの登録状況を表します。
-    > :closed: は非アクティブなメンバーです。
-    > :approved: はアクティブなメンバーです。
-
     ${isActiveSortedMembers.map(this.renderMember).join("\n")}
     `.trim();
 
@@ -126,6 +122,10 @@ Sub Commands:
 ${Object.entries(SUB_COMMANDS)
   .map(([subCommand, description]) => `${subCommand}: ${description}`)
   .join("\n")}
+
+:closed: :approved: はメンバーの登録状況を表します。
+:closed: は非アクティブなメンバーです。
+:approved: はアクティブなメンバーです。
 `.trim();
   }
 }
