@@ -10,6 +10,10 @@ git pull origin main
 echo "Installing node dependencies..."
 npm ci
 
+# Build
+echo "Building..."
+npm run build
+
 # Restart Systemd
 echo "Restarting Systemd..."
 
