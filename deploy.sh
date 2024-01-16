@@ -10,10 +10,6 @@ git pull origin main
 echo "Installing node dependencies..."
 npm ci
 
-# Install headless browser dependencies
-echo "Installing headless browser dependencies..."
-sudo yum install -y atk cups-libs libdrm libXcomposite libXdamage libXext libXfixes libXi libXrandr libXrender libXtst pango alsa-lib gtk3 mesa-libgbm
-
 # Restart Systemd
 echo "Restarting Systemd..."
 
