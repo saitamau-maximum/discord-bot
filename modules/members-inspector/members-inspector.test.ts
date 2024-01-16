@@ -3,11 +3,10 @@ import { Degree, Member } from "./constants";
 import { MembersInspector, maxGrade, parseGrade } from "./members-inspector";
 import { Env } from "../../main";
 
-const GradedUser = (name: string, grade: string[], isActive = true) =>
+const GradedUser = (name: string, grade: string[]) =>
   ({
     name,
     grade: grade.map(parseGrade),
-    isActive,
   } as Member);
 
 describe("grade", () => {
@@ -97,15 +96,6 @@ describe("MembersInspector", () => {
       ]);
     });
 
-    it("非アクティブなメンバーが下に来る", () => {
-      const inspector = new MembersInspector({} as Client, {} as Env);
-      const sortedMembers = inspector.sortMembers([
-        GradedUser("A", ["21B"], false),
-        GradedUser("B", ["21B"], true),
-      ]);
-      expect(sortedMembers.map((member) => member.name)).toEqual(["B", "A"]);
-    });
-
     it("複数グレードを持つメンバーがいる場合は最大のグレードが優先される", () => {
       const inspector = new MembersInspector({} as Client, {} as Env);
       const sortedMembers = inspector.sortMembers([
@@ -118,13 +108,11 @@ describe("MembersInspector", () => {
     it("すべて統合したソートができる", () => {
       const inspector = new MembersInspector({} as Client, {} as Env);
       const sortedMembers = inspector.sortMembers([
-        GradedUser("A", ["21B"], true),
-        GradedUser("B", ["23B"], true),
-        GradedUser("C", ["25B"], true),
-        GradedUser("D", ["21B", "25M"], true),
-        GradedUser("E", ["21B"], false),
-        GradedUser("F", ["21M"], true),
-        GradedUser("G", ["21M"], false),
+        GradedUser("A", ["21B"]),
+        GradedUser("B", ["23B"]),
+        GradedUser("C", ["25B"]),
+        GradedUser("D", ["21B", "25M"]),
+        GradedUser("F", ["21M"]),
       ]);
 
       expect(sortedMembers.map((member) => member.name)).toEqual([
@@ -133,8 +121,6 @@ describe("MembersInspector", () => {
         "A",
         "B",
         "C",
-        "G",
-        "E",
       ]);
     });
   });
