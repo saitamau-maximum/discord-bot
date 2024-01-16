@@ -8,8 +8,7 @@
     "removeComments": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "types": ["vitest/globals"]
+    "strict": true
   },
   "exclude": ["node_modules", "dist", "test", "vitest.config.ts"]
 }

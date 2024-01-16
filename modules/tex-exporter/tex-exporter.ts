@@ -6,6 +6,7 @@ import {
   SlashCommandBuilder,
   SlashCommandSubcommandBuilder,
 } from "discord.js";
+// @ts-ignore
 import * as mj from "mathjax-node";
 import { chromium } from "playwright";
 
@@ -119,9 +120,11 @@ export class TexExporter extends DiscordBotModule {
         ],
       });
     } catch (e) {
-      await message.channel.send({
-        content: `レンダリングに失敗しました\n\`\`\`\n${e.toString()}\n\`\`\``,
-      });
+      if (e instanceof Error) {
+        await message.channel.send({
+          content: `レンダリングに失敗しました\n\`\`\`\n${e.toString()}\n\`\`\``,
+        });
+      }
     } finally {
       clearInterval(interval);
     }
