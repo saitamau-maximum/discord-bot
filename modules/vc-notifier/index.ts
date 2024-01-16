@@ -1,1 +1,1 @@
-export * from "./vc-notifier";
+export { VoiceChannelNotifier } from "./vc-notifier";

@@ -1,1 +1,1 @@
-export * from "./members-inspector"
+export { MembersInspector } from "./members-inspector";

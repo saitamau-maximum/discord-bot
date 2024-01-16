@@ -1,1 +1,1 @@
-export * from "./tex-exporter";
+export { TexExporter } from "./tex-exporter";
