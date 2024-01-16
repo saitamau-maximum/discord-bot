@@ -43,3 +43,6 @@ export const SUB_COMMANDS = {
   [SUB_COMMAND_HELP]: "Maximum Members Inspectorのヘルプを表示する",
   [SUB_COMMAND_INFO]: "Maximum Members Inspectorの情報を表示する",
 };
+
+export const EMOJI_APPROVED = "<:approved:1160109280201023549>";
+export const EMOJI_CLOSED = "<:closed:1139345420447907940>";

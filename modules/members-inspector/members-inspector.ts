@@ -7,6 +7,8 @@ import {
   BASE_COMMAND,
   DEGREE_LABELS,
   Degree,
+  EMOJI_APPROVED,
+  EMOJI_CLOSED,
   Grade,
   MEMBERS_API_ENDPOINT,
   Member,
@@ -126,14 +128,14 @@ Maximumのメンバーの登録状況一覧です。
 
     if (activeMembers.length > 0) {
       blocks.push(`
-### アクティブなメンバー :approved: (${activeMembers.length}人)
+### ${EMOJI_APPROVED} アクティブなメンバー (${activeMembers.length}人)
 ${this.sortMembers(activeMembers).map(this.renderMember).join("\n")}
     `);
     }
 
     if (inActiveMembers.length > 0) {
       blocks.push(`
-### 非アクティブなメンバー :closed: (${inActiveMembers.length}人)
+### ${EMOJI_CLOSED} 非アクティブなメンバー (${inActiveMembers.length}人)
 ${this.sortMembers(inActiveMembers).map(this.renderMember).join("\n")}
     `);
     }
@@ -144,7 +146,7 @@ ${this.sortMembers(inActiveMembers).map(this.renderMember).join("\n")}
       `);
     }
 
-    return blocks.join("\n");
+    return blocks.map((block) => block.trim()).join("\n");
   }
 
   renderMember(member: Member) {
