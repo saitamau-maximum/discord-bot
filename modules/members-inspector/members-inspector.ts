@@ -5,6 +5,7 @@ import { Env } from "../../main";
 
 import {
   BASE_COMMAND,
+  DEGREE_LABELS,
   Degree,
   Grade,
   MEMBERS_API_ENDPOINT,
@@ -105,28 +106,52 @@ export class MembersInspector extends DiscordBotModule {
       const bMaxGrade = maxGrade(...b.grade);
       return maxGrade(aMaxGrade, bMaxGrade) === aMaxGrade ? -1 : 1;
     });
-    // さらにそのあと非アクティブな人が下に来るようにする
-    const isActiveSortedMembers = gradeSortedMembers.sort((a, b) =>
-      a.isActive === b.isActive ? 0 : a.isActive ? -1 : 1
-    );
-    return isActiveSortedMembers;
+    return gradeSortedMembers;
   }
 
   renderMembers(members: Member[]) {
-    const text = `
-    ## Maximum Members Inspector
-    Maximumのメンバーの登録状況一覧です。
+    const [inActiveMembers, activeMembers] = members.reduce(
+      ([inActiveMembers, activeMembers], member) =>
+        member.isActive
+          ? [inActiveMembers, [...activeMembers, member]]
+          : [[...inActiveMembers, member], activeMembers],
+      [[] as Member[], [] as Member[]]
+    );
 
-    ${this.sortMembers(members).map(this.renderMember).join("\n")}
-    `.trim();
+    const blocks: string[] = [];
+    blocks.push(`
+## Maximum Members Inspector
+Maximumのメンバーの登録状況一覧です。
+    `);
 
-    return text;
+    if (activeMembers.length > 0) {
+      blocks.push(`
+### アクティブなメンバー :approved: (${activeMembers.length}人)
+${this.sortMembers(activeMembers).map(this.renderMember).join("\n")}
+    `);
+    }
+
+    if (inActiveMembers.length > 0) {
+      blocks.push(`
+### 非アクティブなメンバー :closed: (${inActiveMembers.length}人)
+${this.sortMembers(inActiveMembers).map(this.renderMember).join("\n")}
+    `);
+    }
+
+    if (blocks.length === 1) {
+      blocks.push(`
+**メンバーがまだ登録されていません。**
+      `);
+    }
+
+    return blocks.join("\n");
   }
 
   renderMember(member: Member) {
-    const grade = member.grade.join(", ");
-    const prefix = member.isActive ? ":approved:" : ":closed:";
-    return `- ${prefix} ${member.name} (${grade})`;
+    const grade = member.grade
+      .map((grade) => `${grade.year}${DEGREE_LABELS[grade.degree]}`)
+      .join(", ");
+    return `- ${member.name} (${grade})`;
   }
 
   help() {

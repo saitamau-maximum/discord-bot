@@ -7,6 +7,12 @@ export enum Degree {
   Doctor = 3,
 }
 
+export const DEGREE_LABELS = {
+  [Degree.Bachelor]: "B",
+  [Degree.Master]: "M",
+  [Degree.Doctor]: "D",
+};
+
 export type Grade = {
   year: number;
   degree: Degree;
