@@ -2,9 +2,9 @@
 Description=Maximum Discord Bot
 
 [Service]
-User=ec2-user
-ExecStart=/home/ec2-user/discord-bot/start.sh
-EnvironmentFile=/home/ec2-user/discord-bot/.env
+User=ubuntu
+ExecStart=/home/ubuntu/discord-bot/start.sh
+EnvironmentFile=/home/ubuntu/discord-bot/.env
 Restart=always
 
 [Install]

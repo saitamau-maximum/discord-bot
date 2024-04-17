@@ -8,4 +8,4 @@ FILE_DIR=$(
 )
 
 cd $FILE_DIR
-npm run start
+/home/ubuntu/.nvm/versions/node/v20.12.0/bin/node dist/main.js
