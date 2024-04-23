@@ -120,7 +120,7 @@ export class TimesManager extends DiscordBotModule {
         });
 
         // チャンネル作成処理
-        const guild = interaction.guild;
+        const guild = mInteraction.guild;
         if (!guild) return;
         const channel = await guild.channels.create({
           name: `times-${channelName}`,
@@ -133,7 +133,7 @@ export class TimesManager extends DiscordBotModule {
 
         await channel.send({
           content: `
-**<@${interaction.user.id}> のTimesチャンネルを作成しました！**
+**<@${mInteraction.user.id}> のTimesチャンネルを作成しました！**
 
 Timesチャンネルは、Twitterのタイムラインのように、自分の日々のできごとを共有したり、わからないことをみんなに質問したりなど、気軽にコミュニケーションを取るためのチャンネルです！
 自分の好きなように使ってください！
