@@ -23,7 +23,7 @@ import {
 export class TimesManager extends DiscordBotModule {
   name = "Times Manager";
   description = "Maximumのtimesチャンネルを管理するDiscord Botです。";
-  version = "0.0.1";
+  version = "0.0.2";
   author = "sor4chi";
 
   constructor(client: Client, env: Env) {
@@ -86,8 +86,10 @@ export class TimesManager extends DiscordBotModule {
   async createChannel(interaction: CommandInteraction) {
     const question = new TextInputBuilder()
       .setCustomId("times-channel-name")
-      .setPlaceholder("チャンネル名を入力してください")
-      .setLabel("チャンネル名 (例: maximum)")
+      .setPlaceholder("`times-`以降のチャンネル名を入力してください")
+      .setLabel(
+        "チャンネル名 (例: maximumと入力するとtimes-maximumが作成されます)"
+      )
       .setStyle(TextInputStyle.Short)
       .setMinLength(2)
       .setMaxLength(100)
