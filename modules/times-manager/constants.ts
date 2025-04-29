@@ -10,4 +10,4 @@ export const SUB_COMMANDS = {
   [SUB_COMMAND_INFO]: "Times Managerの情報を表示する",
 };
 
-export const TIMES_CHANNEL_ID = "1101874714563059742";
+export const ALUMNUS_ROLE = "卒業生";
