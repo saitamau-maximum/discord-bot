@@ -126,7 +126,7 @@ export class TimesManager extends DiscordBotModule {
         );
         if (!member) {
           await mInteraction.editReply({
-            content: "ユーザーが見つかりませんでした。",
+            content: "ユーザーが見つかりませんでした。運営に問い合わせください。",
           });
           return;
         }
@@ -140,7 +140,7 @@ export class TimesManager extends DiscordBotModule {
           .map((role) => role.name);
         if (roles.length === 0) {
           await mInteraction.editReply({
-            content: "学年ロールが見つかりませんでした。",
+            content: "学年ロールが見つかりませんでした。運営に問い合わせください。",
           });
           return;
         }
@@ -158,7 +158,7 @@ export class TimesManager extends DiscordBotModule {
             content:
               "カテゴリー名「" +
               categoryName +
-              "」が見つかりませんでした。カテゴリーを作成する必要があります。",
+              "」が見つかりませんでした。カテゴリーを作成する必要があります。運営に問い合わせください。",
           });
           return;
         }
