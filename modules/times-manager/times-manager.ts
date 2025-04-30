@@ -18,6 +18,7 @@ import {
   SUB_COMMAND_INFO,
   SUB_COMMAND_CREATE,
   ALUMNUS_ROLE,
+  CHANNEL_TYPE_GUILD_CATEGORY,
 } from "./constants";
 
 export class TimesManager extends DiscordBotModule {
@@ -150,7 +151,7 @@ export class TimesManager extends DiscordBotModule {
         // チャンネルのカテゴリーを取得
         const categoryName = "times-" + roles[0];
         const category = mInteraction.guild?.channels.cache.find(
-          (c) => c.type === 4 && c.name === categoryName
+          (c) => c.type === CHANNEL_TYPE_GUILD_CATEGORY && c.name === categoryName
         );
         if (!category) {
           await mInteraction.editReply({

@@ -11,3 +11,5 @@ export const SUB_COMMANDS = {
 };
 
 export const ALUMNUS_ROLE = "卒業生";
+
+export const CHANNEL_TYPE_GUILD_CATEGORY = 4;
