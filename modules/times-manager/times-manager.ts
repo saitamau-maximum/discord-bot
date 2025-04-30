@@ -17,8 +17,10 @@ import {
   SUB_COMMAND_HELP,
   SUB_COMMAND_INFO,
   SUB_COMMAND_CREATE,
-  TIMES_CHANNEL_ID,
+  ALUMNUS_ROLE,
 } from "./constants";
+
+import { ChannelType } from "discord-api-types/v10";
 
 export class TimesManager extends DiscordBotModule {
   name = "Times Manager";
@@ -119,12 +121,55 @@ export class TimesManager extends DiscordBotModule {
           content: `チャンネル名: \`times-${channelName}\` でチャンネルを作成します`,
         });
 
+        // ロールを取得
+        const member = mInteraction.guild?.members.cache.get(
+          mInteraction.user.id
+        );
+        if (!member) {
+          await mInteraction.editReply({
+            content: "ユーザーが見つかりませんでした。運営に問い合わせください。",
+          });
+          return;
+        }
+
+        // ロールをフィルタリングして取得
+        const roles = member.roles.cache
+          .filter((role) => {
+            // 卒業生ロールと学年ロール「xxB」の形式を持つロールを取得
+            return role.name === ALUMNUS_ROLE || role.name.match(/^[0-9]{2}B$/);
+          })
+          .map((role) => role.name);
+        if (roles.length === 0) {
+          await mInteraction.editReply({
+            content: "学年ロールが見つかりませんでした。運営に問い合わせください。",
+          });
+          return;
+        }
+
+        // 降順でソートして「卒業生」ロールを優先させる
+        roles.sort().reverse();
+
+        // チャンネルのカテゴリーを取得
+        const categoryName = "times-" + roles[0];
+        const category = mInteraction.guild?.channels.cache.find(
+          (c) => c.type === ChannelType.GuildCategory && c.name === categoryName
+        );
+        if (!category) {
+          await mInteraction.editReply({
+            content:
+              "カテゴリー名「" +
+              categoryName +
+              "」が見つかりませんでした。カテゴリーを作成する必要があります。運営に問い合わせください。",
+          });
+          return;
+        }
+
         // チャンネル作成処理
         const guild = mInteraction.guild;
         if (!guild) return;
         const channel = await guild.channels.create({
           name: `times-${channelName}`,
-          parent: TIMES_CHANNEL_ID,
+          parent: category.id,
         });
 
         await mInteraction.editReply({
