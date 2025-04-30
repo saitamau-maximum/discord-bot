@@ -11,7 +11,3 @@ export const SUB_COMMANDS = {
 };
 
 export const ALUMNUS_ROLE = "卒業生";
-
-export enum ChannelType {
-  GuildCategory = 4,
-}

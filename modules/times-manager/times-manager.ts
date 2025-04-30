@@ -18,8 +18,9 @@ import {
   SUB_COMMAND_INFO,
   SUB_COMMAND_CREATE,
   ALUMNUS_ROLE,
-  ChannelType,
 } from "./constants";
+
+import { ChannelType } from "discord-api-types/v10";
 
 export class TimesManager extends DiscordBotModule {
   name = "Times Manager";
