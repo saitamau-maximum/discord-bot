@@ -6,6 +6,8 @@ import {
   TARGET_PREFIX,
   SUB_COMMAND_COUNT,
   EXCLUDE_PREFIX,
+  SUB_COMMAND_MEMBERS,
+  OPTION_COUNT,
 } from "./constants";
 import { Env } from "../../main";
 
@@ -33,7 +35,7 @@ class FakeGuild {
   }
 }
 
-// FakeClient では "interactionCreate" イベントだけサポートさせる
+// FakeClient は "interactionCreate" イベントのみをサポートする
 interface FakeClient {
   on: (
     event: "interactionCreate",
@@ -60,8 +62,7 @@ describe("MembersPicker", () => {
           interactionCallback = async (
             interaction: ChatInputCommandInteraction
           ) => {
-            cb(interaction);
-            return Promise.resolve();
+            await cb(interaction);
           };
         }
       },
@@ -75,11 +76,25 @@ describe("MembersPicker", () => {
     const commands = picker.command();
     expect(commands).toHaveLength(1);
     expect(commands[0]).toBeDefined();
-    if (commands[0] !== undefined) {
+    if (commands[0]) {
       expect(commands[0].name).toBe(BASE_COMMAND);
-      const options = commands[0].options;
-      expect(options).toBeDefined();
-      expect(options!.length).toBe(7);
+      // members, help, info のサブコマンドがあるはず
+      expect(commands[0].options).toBeDefined();
+      expect(commands[0].options!.length).toBe(3);
+
+      // members サブコマンドには (target * 1 + target追加 * (OPTION_COUNT - 1) + integer + exclude * OPTION_COUNT) 個のオプションがあるはず
+      const membersSub = commands[0].options!.find(
+        (o) => o.name === SUB_COMMAND_MEMBERS
+      );
+      expect(membersSub).toBeDefined();
+      if (
+        membersSub &&
+        "options" in membersSub &&
+        Array.isArray(membersSub.options)
+      ) {
+        const expectedOptionsLength = OPTION_COUNT + OPTION_COUNT + 1; // targets, excludes, count の個数
+        expect(membersSub.options.length).toBe(expectedOptionsLength);
+      }
     }
   });
 
@@ -94,6 +109,7 @@ describe("MembersPicker", () => {
       isChatInputCommand: () => true,
       commandName: BASE_COMMAND,
       options: {
+        getSubcommand: () => SUB_COMMAND_MEMBERS,
         getMentionable: () => null,
         getInteger: () => 1,
       },
@@ -102,9 +118,10 @@ describe("MembersPicker", () => {
     } as unknown as ChatInputCommandInteraction;
 
     await interactionCallback(fakeInteraction);
-    expect(fakeInteraction.reply).toHaveBeenCalledWith(
-      "このコマンドは DM 等では使用できません。サーバー内で使用してください。"
-    );
+    expect(fakeInteraction.reply).toHaveBeenCalledWith({
+      content:
+        "このコマンドは DM 等では使用できません。サーバー内で使用してください。",
+    });
   });
 
   it("有効なメンバーの中から選出して返信する", async () => {
@@ -112,8 +129,9 @@ describe("MembersPicker", () => {
     const member2 = new FakeGuildMember("2") as GuildMember; // 除外対象
     const fakeGuild = new FakeGuild([member1, member2]);
 
-    // ターゲット (member1) と除外対象 (member2) を返すフェイクオプション
+    // ターゲット (member1) と除外対象 (member2) を返す
     const fakeOptions = {
+      getSubcommand: () => SUB_COMMAND_MEMBERS,
       getMentionable: (name: string) => {
         if (name === `${TARGET_PREFIX}1`) return member1;
         if (name === `${EXCLUDE_PREFIX}1`) return member2;
@@ -140,6 +158,6 @@ describe("MembersPicker", () => {
     expect(fakeInteraction.reply).toHaveBeenCalled();
     const replyArg = (fakeInteraction.reply as ReturnType<typeof vi.fn>).mock
       .calls[0][0];
-    expect(replyArg).toContain(member1.toString());
+    expect(replyArg.content).toContain(member1.toString());
   });
 });
