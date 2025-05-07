@@ -53,7 +53,9 @@ export class MembersPicker extends DiscordBotModule {
     return [builder.toJSON()];
   }
 
-  private buildMembersSubcommand(sub: SlashCommandSubcommandBuilder): any {
+  private buildMembersSubcommand(
+    sub: SlashCommandSubcommandBuilder
+  ): SlashCommandSubcommandBuilder {
     sub
       .setName(SUB_COMMAND_MEMBERS)
       .setDescription(SUB_COMMANDS[SUB_COMMAND_MEMBERS]);

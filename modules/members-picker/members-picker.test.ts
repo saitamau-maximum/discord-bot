@@ -107,10 +107,10 @@ describe("MembersPicker", () => {
     test("members サブコマンドのオプションが正しく設定されている", () => {
       const commandJSON = picker.command()[0];
       const membersSub = (commandJSON.options as any[] | undefined)?.find(
-        (opt: any) => opt.name === SUB_COMMAND_MEMBERS
+        (opt) => opt.name === SUB_COMMAND_MEMBERS
       );
       expect(membersSub).toBeDefined();
-      const options = (membersSub as any).options ?? [];
+      const options = (membersSub).options ?? [];
 
       expect(options.length).toBe(expectedOptionsLength);
     });
