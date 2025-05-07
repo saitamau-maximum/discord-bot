@@ -8,7 +8,9 @@ export const EXCLUDE_PREFIX = "exclude";
 export const SUB_COMMAND_INFO = "info";
 export const SUB_COMMAND_HELP = "help";
 export const SUB_COMMAND_MEMBERS = "members";
-export const SUB_COMMAND_COUNT = "count";
+
+export const SUB_COMMAND_COUNT_OPTION = "count";
+export const SUB_COMMAND_BOT_OPTION = "bots";
 
 export const SUB_COMMANDS = {
   [SUB_COMMAND_MEMBERS]: "メンバー抽選機を実行する",
@@ -17,7 +19,9 @@ export const SUB_COMMANDS = {
 };
 
 export const MEMBERS_COMMAND_DESC = {
-  [TARGET_PREFIX]: "抽選対象をロール、ユーザー、@everyone 等を用いて指定する",
-  [SUB_COMMAND_COUNT]: "抽選人数 (デフォルトは 1 人)",
+  [TARGET_PREFIX]: "抽選対象を指定する",
+  [SUB_COMMAND_COUNT_OPTION]: "抽選人数 (デフォルト: 1)",
   [EXCLUDE_PREFIX]: "除外したいユーザーやロールを指定する",
+  [SUB_COMMAND_BOT_OPTION]:
+    "Bot を抽選対象に含めるかどうか (デフォルト: False)",
 };
