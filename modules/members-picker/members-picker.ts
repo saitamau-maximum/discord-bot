@@ -60,24 +60,32 @@ export class MembersPicker extends DiscordBotModule {
       .setName(SUB_COMMAND_MEMBERS)
       .setDescription(SUB_COMMANDS[SUB_COMMAND_MEMBERS]);
 
-    // target オプションを OPTION_COUNT 個用意 (target1 は必須)
-    for (let i = 1; i <= OPTION_COUNT; i++) {
-      sub.addMentionableOption(
-        (option) =>
-          option
-            .setName(`${TARGET_PREFIX}${i}`)
-            .setDescription(MEMBERS_COMMAND_DESC[TARGET_PREFIX])
-            .setRequired(i === 1) // 1 番目の選択肢だけ必須とする
-      );
-    }
+    // target1 (必須)
+    sub.addMentionableOption((option) =>
+      option
+        .setName(`${TARGET_PREFIX}1`)
+        .setDescription(MEMBERS_COMMAND_DESC[TARGET_PREFIX])
+        .setRequired(true)
+    );
 
+    // count
     sub.addIntegerOption((option) =>
       option
         .setName(SUB_COMMAND_COUNT_OPTION)
         .setDescription(MEMBERS_COMMAND_DESC[SUB_COMMAND_COUNT_OPTION])
     );
 
-    // exclude オプションを OPTION_COUNT 個用意 (全て optional)
+    // target2 - target5
+    for (let i = 2; i <= OPTION_COUNT; i++) {
+      sub.addMentionableOption((option) =>
+        option
+          .setName(`${TARGET_PREFIX}${i}`)
+          .setDescription(MEMBERS_COMMAND_DESC[TARGET_PREFIX])
+          .setRequired(false)
+      );
+    }
+
+    // exclude1 - exclude5
     for (let i = 1; i <= OPTION_COUNT; i++) {
       sub.addMentionableOption((option) =>
         option
@@ -86,11 +94,13 @@ export class MembersPicker extends DiscordBotModule {
       );
     }
 
+    // bot option
     sub.addBooleanOption((option) =>
       option
         .setName(SUB_COMMAND_BOT_OPTION)
         .setDescription(MEMBERS_COMMAND_DESC[SUB_COMMAND_BOT_OPTION])
     );
+
     return sub;
   }
 

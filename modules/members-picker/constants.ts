@@ -1,6 +1,6 @@
 export const BASE_COMMAND = "pick";
 
-export const OPTION_COUNT = 3;
+export const OPTION_COUNT = 5;
 
 export const TARGET_PREFIX = "target";
 export const EXCLUDE_PREFIX = "exclude";
