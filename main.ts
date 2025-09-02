@@ -1,4 +1,4 @@
-import { Client, REST, Routes } from "discord.js";
+import { Client, REST, Routes, Partials } from "discord.js";
 import { z } from "zod";
 import * as modules from "./modules";
 import { config } from "dotenv";
@@ -24,7 +24,9 @@ const client = new Client({
     "GuildMessages",
     "GuildMembers",
     "MessageContent",
+    "GuildMessageReactions",
   ],
+  partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 });
 
 client.once("ready", () => {

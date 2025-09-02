@@ -1,0 +1,1 @@
+export { MaximumPoint } from "./maximum-point";
