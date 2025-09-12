@@ -1,1 +1,0 @@
-export { MaximumIdMention } from "./maximum-id-mention";
