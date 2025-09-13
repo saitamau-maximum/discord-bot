@@ -1,8 +1,8 @@
 import { matchWithIds } from "./mention";
 
-describe("MAXIMUM_DISPLAY_ID_PATTERNS", () => {
+describe("matchWithIds", () => {
   const PATTERN = /^m\.([a-zA-Z0-9_-]+)$/g;
-  it("should match maximum display id", () => {
+  it("should match with display ids by mention pattern", () => {
     const content = `
 m.test1
 テスト m.test2 テスト
